@@ -35,7 +35,7 @@ import java.util.*
 data class SignedTransaction(val txBits: SerializedBytes<WireTransaction>,
                              val sigs: List<DigitalSignature.WithKey>
 ) : NamedByHash {
-// DOCEND 1
+    // DOCEND 1
     constructor(wtx: WireTransaction, sigs: List<DigitalSignature.WithKey>) : this(wtx.serialize(), sigs) {
         cachedTransaction = wtx
     }
@@ -83,13 +83,13 @@ data class SignedTransaction(val txBits: SerializedBytes<WireTransaction>,
     // DOCSTART 2
     @Throws(SignatureException::class)
     fun verifySignaturesExcept(vararg allowedToBeMissing: PublicKey): WireTransaction {
-    // DOCEND 2
+        // DOCEND 2
         // Embedded WireTransaction is not deserialised until after we check the signatures.
         checkSignaturesAreValid()
 
         val needed = getMissingSignatures() - allowedToBeMissing
         if (needed.isNotEmpty())
-                throw SignaturesMissingException(needed.toNonEmptySet(), getMissingKeyDescriptions(needed), id)
+            throw SignaturesMissingException(needed.toNonEmptySet(), getMissingKeyDescriptions(needed), id)
         return tx
     }
 

@@ -6,7 +6,6 @@ import net.corda.core.flows.*
 import net.corda.core.identity.Party
 import net.corda.core.node.services.TrustedAuthorityNotaryService
 import net.corda.core.transactions.SignedTransaction
-import net.corda.core.transactions.WireTransaction
 import net.corda.core.utilities.unwrap
 import java.security.SignatureException
 
@@ -24,35 +23,17 @@ class ValidatingNotaryFlow(otherSide: Party, service: TrustedAuthorityNotaryServ
      */
     @Suspendable
     override fun receiveAndVerifyTx(): TransactionParts {
-        val stx = receive<SignedTransaction>(otherSide).unwrap { it }
-        checkSignatures(stx)
-        val wtx = stx.tx
-        validateTransaction(wtx)
-        return TransactionParts(wtx.id, wtx.inputs, wtx.timeWindow)
-    }
-
-    private fun checkSignatures(stx: SignedTransaction) {
         try {
-            stx.verifySignaturesExcept(serviceHub.myInfo.notaryIdentity.owningKey)
-        } catch(e: SignatureException) {
+            return subFlow(ReceiveTransactionFlow(SignedTransaction::class.java, otherSide, verifySignatures = false)).unwrap {
+                it.verifySignaturesExcept(serviceHub.myInfo.notaryIdentity.owningKey)
+                val wtx = it.tx
+                wtx.toLedgerTransaction(serviceHub).verify()
+                TransactionParts(wtx.id, wtx.inputs, wtx.timeWindow)
+            }
+        } catch(e: TransactionVerificationException) {
+            throw NotaryException(NotaryError.TransactionInvalid(e))
+        } catch (e: SignatureException) {
             throw NotaryException(NotaryError.TransactionInvalid(e))
         }
     }
-
-    @Suspendable
-    fun validateTransaction(wtx: WireTransaction) {
-        try {
-            resolveTransaction(wtx)
-            wtx.toLedgerTransaction(serviceHub).verify()
-        } catch (e: Exception) {
-            throw when (e) {
-                is TransactionVerificationException,
-                is SignatureException -> NotaryException(NotaryError.TransactionInvalid(e))
-                else -> e
-            }
-        }
-    }
-
-    @Suspendable
-    private fun resolveTransaction(wtx: WireTransaction) = subFlow(ResolveTransactionsFlow(wtx, otherSide))
 }
