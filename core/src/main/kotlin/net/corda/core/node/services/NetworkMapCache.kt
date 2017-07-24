@@ -9,6 +9,7 @@ import net.corda.core.node.NodeInfo
 import net.corda.core.node.ServiceHub
 import net.corda.core.randomOrNull
 import net.corda.core.serialization.CordaSerializable
+import net.corda.core.utilities.NetworkHostAndPort
 import org.bouncycastle.asn1.x500.X500Name
 import rx.Observable
 import java.security.PublicKey
@@ -77,7 +78,10 @@ interface NetworkMapCache {
     fun getNodeByLegalIdentity(party: AbstractParty): NodeInfo?
 
     /** Look up the node info for a legal name. */
-    fun getNodeByLegalName(principal: X500Name): NodeInfo? = partyNodes.singleOrNull { it.legalIdentity.name == principal }
+    fun getNodeByLegalName(principal: X500Name): NodeInfo?
+
+    /** Look up the node info for a host and port. */
+    fun getNodeByAddress(address: NetworkHostAndPort): NodeInfo?
 
     /**
      * In general, nodes can advertise multiple identities: a legal identity, and separate identities for each of

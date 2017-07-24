@@ -175,8 +175,6 @@ class MockNetwork(private val networkSendManuallyPumped: Boolean = false,
                     .getOrThrow()
         }
 
-        override fun makeNetworkMapCache() = InMemoryNetworkMapCache(false, services)
-
         override fun makeIdentityService(trustRoot: X509Certificate,
                                          clientCa: CertificateAndKeyPair?,
                                          legalIdentity: PartyAndCertificate): IdentityService {
@@ -307,7 +305,7 @@ class MockNetwork(private val networkSendManuallyPumped: Boolean = false,
         if (start) {
             node.setup().start()
             if (threadPerNode && networkMapAddress != null)
-                node.nodeReadyFuture.getOrThrow() // Block and wait for the node to be ready to communicate (either register with network map or load data localy).
+                node.nodeReadyFuture.getOrThrow() // Block and wait for the node to be ready to communicate (either register with network map or load data from db).
         }
         _nodes.add(node)
         return node
