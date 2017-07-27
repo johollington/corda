@@ -118,7 +118,6 @@ class PartialMerkleTreeTest : TestDependencyInjectionBase() {
         assertEquals(1, leaves.inputs.size)
         assertEquals(0, leaves.attachments.size)
         assertTrue(mt.filteredLeaves.timeWindow != null)
-        assertEquals(null, mt.filteredLeaves.type)
         assertEquals(null, mt.filteredLeaves.notary)
         assertTrue(mt.verify())
     }
@@ -228,7 +227,6 @@ class PartialMerkleTreeTest : TestDependencyInjectionBase() {
                 outputs = testTx.outputs,
                 commands = testTx.commands,
                 notary = notary,
-                type = TransactionType.General,
                 timeWindow = timeWindow
         )
     }

@@ -26,8 +26,6 @@ data class WireTransaction(
         /** Ordered list of ([CommandData], [PublicKey]) pairs that instruct the contracts what to do. */
         override val commands: List<Command<*>>,
         override val notary: Party?,
-        // TODO: remove type
-        override val type: TransactionType,
         override val timeWindow: TimeWindow?
 ) : CoreTransaction(), TraversableTransaction {
     init {
@@ -40,7 +38,7 @@ data class WireTransaction(
     override val id: SecureHash get() = merkleTree.hash
 
     override val availableComponents: List<Any>
-        get() = listOf(inputs, attachments, outputs, commands).flatten() + listOf(notary, type, timeWindow).filterNotNull()
+        get() = listOf(inputs, attachments, outputs, commands).flatten() + listOf(notary, timeWindow).filterNotNull()
 
     /** Public keys that need to be fulfilled by signatures in order for the transaction to be valid. */
     val requiredSigningKeys: Set<PublicKey> get() {
@@ -92,7 +90,7 @@ data class WireTransaction(
         val resolvedInputs = inputs.map { ref ->
             resolveStateRef(ref)?.let { StateAndRef(it, ref) } ?: throw TransactionResolutionException(ref.txhash)
         }
-        return LedgerTransaction(resolvedInputs, outputs, authenticatedArgs, attachments, id, notary, timeWindow, type)
+        return LedgerTransaction(resolvedInputs, outputs, authenticatedArgs, attachments, id, notary, timeWindow)
     }
 
     /**
@@ -120,7 +118,6 @@ data class WireTransaction(
                 outputs.filter { filtering.test(it) },
                 commands.filter { filtering.test(it) },
                 notNullFalse(notary) as Party?,
-                notNullFalse(type) as TransactionType?,
                 notNullFalse(timeWindow) as TimeWindow?
         )
     }

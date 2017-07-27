@@ -30,7 +30,6 @@ interface TraversableTransaction {
     val outputs: List<TransactionState<ContractState>>
     val commands: List<Command<*>>
     val notary: Party?
-    val type: TransactionType?
     val timeWindow: TimeWindow?
 
     /**
@@ -52,7 +51,6 @@ interface TraversableTransaction {
             // torn-off transaction and id calculation.
             val result = mutableListOf(inputs, attachments, outputs, commands).flatten().toMutableList()
             notary?.let { result += it }
-            type?.let { result += it }
             timeWindow?.let { result += it }
             return result
         }
@@ -76,7 +74,6 @@ class FilteredLeaves(
         override val outputs: List<TransactionState<ContractState>>,
         override val commands: List<Command<*>>,
         override val notary: Party?,
-        override val type: TransactionType?,
         override val timeWindow: TimeWindow?
 ) : TraversableTransaction {
     /**

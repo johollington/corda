@@ -34,8 +34,7 @@ data class LedgerTransaction(
         /** The hash of the original serialised WireTransaction. */
         override val id: SecureHash,
         override val notary: Party?,
-        val timeWindow: TimeWindow?,
-        val type: TransactionType
+        val timeWindow: TimeWindow?
 ) : FullTransaction() {
     //DOCEND 1
     init {
