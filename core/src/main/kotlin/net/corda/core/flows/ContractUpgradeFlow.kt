@@ -50,7 +50,7 @@ class ContractUpgradeFlow<OldState : ContractState, out NewState : ContractState
                 upgradedContractClass: Class<out UpgradedContract<OldState, NewState>>
         ): TransactionBuilder {
             val contractUpgrade = upgradedContractClass.newInstance()
-            return TransactionType.General.Builder(stateRef.state.notary)
+            return TransactionBuilder(stateRef.state.notary)
                     .withItems(
                             stateRef,
                             contractUpgrade.upgrade(stateRef.state.data),

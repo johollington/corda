@@ -2,7 +2,6 @@ package net.corda.core.contracts.clauses
 
 import net.corda.core.contracts.AuthenticatedObject
 import net.corda.core.contracts.CommandData
-import net.corda.core.contracts.TransactionType
 import net.corda.core.crypto.SecureHash
 import net.corda.core.transactions.LedgerTransaction
 import org.junit.Test

@@ -31,7 +31,7 @@ class AnotherDummyContract : Contract, net.corda.core.node.DummyContractBackdoor
 
     override fun generateInitial(owner: PartyAndReference, magicNumber: Int, notary: Party): TransactionBuilder {
         val state = State(magicNumber)
-        return TransactionType.General.Builder(notary = notary).withItems(state, Command(Commands.Create(), owner.party.owningKey))
+        return TransactionBuilder(notary).withItems(state, Command(Commands.Create(), owner.party.owningKey))
     }
 
     override fun inspectState(state: ContractState): Int = (state as State).magicNumber
