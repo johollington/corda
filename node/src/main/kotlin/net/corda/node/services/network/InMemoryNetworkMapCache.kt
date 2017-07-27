@@ -244,8 +244,14 @@ open class InMemoryNetworkMapCache(private val serviceHub: ServiceHubInternal?) 
     private fun updateInfoDB(nodeInfo: NodeInfo) {
         val session = createSession()
         session?.use {
+            // TODO For now the main legal identity is left in NodeInfo, this should be set comparision/come up with index for NodeInfo?
+            val info = findByLegalIdentity(session, nodeInfo.legalIdentity.owningKey)
+            session.clear()
             val nodeInfoEntry = nodeInfo.generateMappedObject(NodeInfoSchemaV1)
             val tx = it.beginTransaction()
+            if (info.isNotEmpty()) {
+                nodeInfoEntry.id = info[0].id
+            }
             session.saveOrUpdate(nodeInfoEntry)
             tx.commit()
         }

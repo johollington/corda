@@ -40,6 +40,9 @@ object NodeInfoSchemaV1 : MappedSchema(
     @Entity
     @Table(name = "node_infos")
     class PersistentNodeInfo(
+            // TODO NodeInfo should be indexed by main legal identity, but it doesn't go well with what is in the design doc
+            //  for network map redesign (especially service removal and having a set of identities). We still need a notion
+            //  of main identity. (eventually we can compare on set which is kind of ugly)
             @Id
             @GeneratedValue
             @Column(name = "node_info_id")
